@@ -72,7 +72,7 @@ function Build-Library([string]$BuildType, [string]$Arch, [string]$LangBinding)
 	cmake ${OptLangBinding} -A $Arch ../../
 	cmake --build . --config $BuildType
 	popd
-	md $env:OutputDir\lib\ -ErrorAction:'silentlycontinue' -ErrorAction:'silentlycontinue'
+	md $env:OutputDir\lib\ -ErrorAction:'silentlycontinue'
 	#cp $env:BuildDir\lib\$BuildType\zt.lib $env:OutputDir\lib\libzt.lib -ErrorAction:'silentlycontinue'
 	cp $env:BuildDir\lib\$BuildType\zt-shared.dll $env:OutputDir\lib\libzt.dll -ErrorAction:'silentlycontinue'
 	cp $env:BuildDir\lib\$BuildType\zt-shared.pdb $env:OutputDir\lib\libzt.pdb -ErrorAction:'silentlycontinue'
