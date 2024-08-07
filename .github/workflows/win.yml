@@ -8,10 +8,6 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-
-    defaults:
-      run:
-        shell: msys2 {0}
     
     steps:
     - uses: msys2/setup-msys2@v2
@@ -41,6 +37,7 @@ jobs:
       run: git submodule update --init
     
     - name: Build Package
+      shell: msys2 {0}
       run: ./build.sh host-jar
 
     - uses: actions/upload-artifact@v2
