@@ -16,6 +16,8 @@ jobs:
         install: >-
           curl
           git
+          tree
+          cmake
     
     - name: Setup Java 8.0.362-zulu
       id: sdkman
