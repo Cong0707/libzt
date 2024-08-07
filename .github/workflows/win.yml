@@ -1,0 +1,47 @@
+name: Build Windows Package
+
+on: [workflow_dispatch]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+    
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          curl
+          git
+    
+    - uses: actions/checkout@v2
+
+    - name: Checkout submodules
+      run: git submodule update --init
+
+    - uses: sdkman/sdkman-action@v1
+      id: sdkman
+      with:
+        candidate: java
+        version: 8.0.362-zulu
+    - uses: actions/setup-java@v3
+      id: setup-java
+      with:
+        distribution: 'jdkfile'
+        java-version: 8.0.362
+    - run: java -version
+    
+    - name: Build Package
+      run: ./build.sh host-jar
+
+    - uses: actions/upload-artifact@v2
+      with:
+        path: .\
+
