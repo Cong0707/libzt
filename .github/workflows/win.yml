@@ -21,22 +21,24 @@ jobs:
           curl
           git
     
+    - name: Setup Java ${{ matrix.version }}
+      id: sdkman
+      uses: sdkman/sdkman-action@b1f9b696c79148b66d3d3a06f7ea801820318d0f
+      with:
+        candidate: java
+        version: ${{ matrix.version }}
+    - uses: actions/setup-java@v3
+      id: setup-java
+      with:
+        distribution: 'jdkfile'
+        java-version: 8
+        jdkFile: ${{ steps.sdkman.outputs.file }}
+    - run: java -version
+
     - uses: actions/checkout@v2
 
     - name: Checkout submodules
       run: git submodule update --init
-
-    - uses: sdkman/sdkman-action@b1f9b696c79148b66d3d3a06f7ea801820318d0f
-      id: sdkman
-      with:
-        candidate: java
-        version: 8.0.362-zulu
-    - uses: actions/setup-java@v1
-      id: setup-java
-      with:
-        jdkFile: ${{ steps.sdkman.outputs.file }}
-        java-version: 8
-    - run: java -version
     
     - name: Build Package
       run: ./build.sh host-jar
