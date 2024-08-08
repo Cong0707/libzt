@@ -64,7 +64,7 @@ function Host-Jar {
     )
 
     $ARTIFACT = "jar"
-    $PKG_VERSION = (& git describe --tags --abbrev=0) -ErrorAction SilentlyContinue
+    $PKG_VERSION = & git describe --tags --abbrev=0
     if (-not $PKG_VERSION) {
         Write-Output "No Git tags found. Ensure you have tags in your Git repository."
         exit 1
