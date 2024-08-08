@@ -10,19 +10,6 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        install: >-
-          curl
-          git
-          tree
-          base-devel
-          gcc
-          cmake
-          mingw-w64-x86_64-winpthreads
-          mingw-w64-x86_64-openssl
-
     - name: Set up MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
@@ -53,9 +40,8 @@ jobs:
       run: git submodule update --init
     
     - name: Build Package
-      shell: msys2 {0}
-      run: ./build.sh host-jar
-
+      run: . ./buildjar.ps1 ; Host-Jar
+      
     - uses: actions/upload-artifact@v2
       with:
         path: dist
