@@ -19,7 +19,7 @@ jobs:
           tree
           base-devel
           gcc
-          mingw-w64-x86_64-cmake
+          cmake
           mingw-w64-x86_64-ninja
           mingw-w64-x86_64-winpthreads
           mingw-w64-x86_64-openssl
