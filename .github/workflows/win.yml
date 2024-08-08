@@ -17,8 +17,9 @@ jobs:
           curl
           git
           tree
-          cmake
-          gcc
+          base-devel
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-cmake
     
     - uses: actions/setup-java@v4
       with:
