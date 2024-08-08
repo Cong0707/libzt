@@ -37,9 +37,16 @@ elseif ($OSNAME -eq [System.PlatformID]::Unix) {
 }
 
 $CMAKE_VERSION = (& $CMAKE --version | Select-Object -First 1 | ForEach-Object { $_ -replace '[^0-9]', '' })
-function Ver($version) {
-    return [int]::Parse(($version -replace '\.', '') -PadLeft(8, '0'))
+function Ver {
+    param (
+        [string]$version
+    )
+    # 使用 PadLeft 方法在处理之前先将版本号转换为字符串
+    $versionString = $version -replace '\.', ''
+    $paddedVersion = $versionString.PadLeft(8, '0')
+    return [int]$paddedVersion
 }
+
 $BUILD_CONCURRENCY = ""
 if (Ver $CMAKE_VERSION -gt Ver "3.12") {
     $BUILD_CONCURRENCY = "-j $N_PROCESSORS"
