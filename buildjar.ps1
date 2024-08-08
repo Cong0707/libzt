@@ -41,12 +41,9 @@ function Ver {
     param (
         [string]$version
     )
-    # 使用 PadLeft 方法在处理之前先将版本号转换为字符串
-    $versionString = $version -replace '\.', ''
-    $paddedVersion = $versionString.PadLeft(8, '0')
-    return [int]$paddedVersion
+    $version = $version.PadLeft(4, '0')
+    return [int]::Parse($version)
 }
-
 $BUILD_CONCURRENCY = ""
 if (Ver $CMAKE_VERSION -gt Ver "3.12") {
     $BUILD_CONCURRENCY = "-j $N_PROCESSORS"
@@ -67,7 +64,11 @@ function Host-Jar {
     )
 
     $ARTIFACT = "jar"
-    $PKG_VERSION = (& git describe --tags --abbrev=0)
+    $PKG_VERSION = (& git describe --tags --abbrev=0) -ErrorAction SilentlyContinue
+    if (-not $PKG_VERSION) {
+        Write-Output "No Git tags found. Ensure you have tags in your Git repository."
+        exit 1
+    }
     if ($BuildType -like "*docs*") {
         & "$env:JAVA_HOME/bin/javadoc" src/bindings/java/com/zerotier/sockets/*.java -d docs/java
         exit 0
@@ -75,7 +76,11 @@ function Host-Jar {
     $VARIANT = "-DZTS_ENABLE_JAVA=True"
     $CACHE_DIR = "$DEFAULT_HOST_BUILD_CACHE_DIR-$ARTIFACT-$BuildType"
     $TARGET_BUILD_DIR = "$DEFAULT_HOST_BIN_OUTPUT_DIR-$ARTIFACT-$BuildType"
-    Remove-Item -Recurse -Force $TARGET_BUILD_DIR
+    
+    if (Test-Path $TARGET_BUILD_DIR) {
+        Remove-Item -Recurse -Force $TARGET_BUILD_DIR
+    }
+    
     $PKG_OUTPUT_DIR = "$TARGET_BUILD_DIR/pkg"
     New-Item -ItemType Directory -Path $PKG_OUTPUT_DIR -Force
     $JAVA_JAR_DIR = "$CACHE_DIR/pkg/jar"
@@ -114,4 +119,4 @@ function Host-Jar {
         Start-Process -FilePath "$env:JAVA_HOME/bin/java" -ArgumentList "-cp .:libzt-$PKG_VERSION.jar selftest client $env:bob_path $env:testnet $env:alice_ip4 $env:port4" -PassThru
         Pop-Location
     }
-}
+} 
