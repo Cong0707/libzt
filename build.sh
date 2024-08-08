@@ -501,7 +501,7 @@ host-jar()
     BUILD_TYPE=${1:-release}
     if [[ $1 = *"docs"* ]]; then
         # Generate documentation
-        powershell javadoc src/bindings/java/com/zerotier/sockets/*.java -d docs/java
+        cmd javadoc src/bindings/java/com/zerotier/sockets/*.java -d docs/java
         exit 0
     fi
     VARIANT="-DZTS_ENABLE_JAVA=True"
@@ -522,14 +522,14 @@ host-jar()
     cp -f $CACHE_DIR/lib/libzt.* $JAVA_JAR_DIR
     cd $JAVA_JAR_DIR
     export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
-    powershell javac -Xlint:all com/zerotier/sockets/*.java
+    cmd javac -Xlint:all com/zerotier/sockets/*.java
 
     jar cf libzt-$PKG_VERSION.jar $SHARED_LIB_NAME com/zerotier/sockets/*.class
     rm -rf com $SHARED_LIB_NAME
     cd -
     # Copy JAR to dist/
     echo -e "\nContents of JAR:\n"
-    powershell jar tf $JAVA_JAR_DIR/*.jar
+    cmd jar tf $JAVA_JAR_DIR/*.jar
     echo -e
     mv $JAVA_JAR_DIR/*.jar $PKG_OUTPUT_DIR
     echo -e "\n - Build cache  : $CACHE_DIR\n - Build output : $BUILD_OUTPUT_DIR\n"
@@ -547,11 +547,11 @@ host-jar()
         cp -f $PKG_OUTPUT_DIR/*.jar .
         # Unpack JAR to get access to shared library
         jar xf *.jar libzt.dylib
-        powershell javac -cp *.jar selftest.java
+        cmd javac -cp *.jar selftest.java
         # Start Alice as server
-        powershell java -cp ".:libzt-"$(git describe --abbrev=0)".jar" selftest server $alice_path $testnet $port4 &
+        cmd java -cp ".:libzt-"$(git describe --abbrev=0)".jar" selftest server $alice_path $testnet $port4 &
         # Start Bob as client
-        powershell java -cp ".:libzt-"$(git describe --abbrev=0)".jar" selftest client $bob_path $testnet $alice_ip4 $port4 &
+        cmd java -cp ".:libzt-"$(git describe --abbrev=0)".jar" selftest client $bob_path $testnet $alice_ip4 $port4 &
     fi
 }
 
