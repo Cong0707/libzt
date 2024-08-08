@@ -32,7 +32,6 @@ jobs:
       run: |
         choco install visualstudio2022buildtools --params "'/InstallAdditionalWorkloads netfx-4.8-devpack,Microsoft.VisualStudio.Workload.VCTools'"
         choco install visualstudio2022-workload-vctools
-        choco install visualstudio2022-win10sdk
     
     - uses: actions/setup-java@v4
       with:
