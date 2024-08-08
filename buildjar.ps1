@@ -1,14 +1,3 @@
-function Check-Submodules {
-    if (Test-Path "ext/lwip" -and (Get-ChildItem "ext/lwip").Count -gt 0 -and
-        Test-Path "ext/lwip-contrib" -and (Get-ChildItem "ext/lwip-contrib").Count -gt 0 -and
-        Test-Path "ext/ZeroTierOne" -and (Get-ChildItem "ext/ZeroTierOne").Count -gt 0) {
-        # Submodules are present
-    } else {
-        Write-Output "Submodules seem to be missing. Please run: git submodule update --init"
-        exit 1
-    }
-}
-
 $CLANG_FORMAT = "clang-format-11"
 $libzt = Get-Location
 
@@ -69,7 +58,6 @@ function Host-Jar {
         [string]$BuildType = "release",
         [string]$Test = ""
     )
-    Check-Submodules
 
     $ARTIFACT = "jar"
     $PKG_VERSION = (& git describe --tags --abbrev=0)
