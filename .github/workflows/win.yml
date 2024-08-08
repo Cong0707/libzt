@@ -18,10 +18,10 @@ jobs:
           git
           tree
           base-devel
-          mingw-w64-x86_64-toolchain
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-ninja
-          mingw-w64-x86_64-winpthreads
+          mingw-w32-i686-toolchain
+          mingw-w32-i686-cmake
+          mingw-w32-i686-ninja
+          mingw-w32-i686-winpthreads
     
     - uses: actions/setup-java@v4
       with:
