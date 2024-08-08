@@ -39,8 +39,13 @@ jobs:
         distribution: 'zulu'
         java-version: '8'
         
-    - name: Set JAVA_PATH
-      run: echo "JAVA_HOME=$(dirname $(dirname $(which java)))" >> $GITHUB_ENV
+    - name: Set JAVA_PATH and JNI Paths
+      run: |
+        echo "JAVA_HOME=$(dirname $(dirname $(which java)))" >> $GITHUB_ENV
+        echo "JNI_INCLUDE_PATH=$JAVA_HOME/include" >> $GITHUB_ENV
+        echo "JNI_INCLUDE_PATH2=$JAVA_HOME/include/win32" >> $GITHUB_ENV
+        echo "JNI_INCLUDE_DIRS=$JAVA_HOME/include;$JAVA_HOME/include/win32" >> $GITHUB_ENV
+
         
     - uses: actions/checkout@v2
 
