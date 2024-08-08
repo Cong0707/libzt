@@ -27,9 +27,6 @@ jobs:
         
     - name: Set JAVA_PATH
       run: echo "JAVA_HOME=$(dirname $(dirname $(which java)))" >> $GITHUB_ENV
-    
-    - shell: msys2 {0}
-      run: $JAVA_HOME/bin/jar -version
         
     - uses: actions/checkout@v2
 
