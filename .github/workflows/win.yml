@@ -33,7 +33,7 @@ jobs:
         java-version: 8
         jdkFile: ${{ steps.sdkman.outputs.file }}
         
-    - run: cmd java -version
+    - run: cmd jar -version
       shell: msys2 {0}
 
     - uses: actions/checkout@v2
