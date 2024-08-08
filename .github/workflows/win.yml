@@ -32,7 +32,9 @@ jobs:
         distribution: 'jdkfile'
         java-version: 8
         jdkFile: ${{ steps.sdkman.outputs.file }}
-    - run: java -version
+        
+    - run: cmd java -version
+      shell: msys2 {0}
 
     - uses: actions/checkout@v2
 
