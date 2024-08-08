@@ -20,11 +20,12 @@ jobs:
           base-devel
           mingw-w64-x86_64-toolchain
           mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-ninja
     
     - uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
-        java-version: '21'
+        java-version: '8'
         
     - name: Set JAVA_PATH
       run: echo "JAVA_HOME=$(dirname $(dirname $(which java)))" >> $GITHUB_ENV
