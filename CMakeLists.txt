@@ -419,15 +419,13 @@ endif()
 
 # WINDOWS-specific MSVC flags and libraries
 if(BUILD_WIN)
-    set(WINLIBDIR, "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64")
+    # find_library (ws2_32_LIBRARY_PATH NAMES WS2_32 HINTS "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64")
+    # find_library (shlwapi_LIBRARY_PATH NAMES ShLwApi HINTS "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64")
     
-    # find_library (ws2_32_LIBRARY_PATH NAMES WS2_32 HINTS ${WINLIBDIR})
-    # find_library (shlwapi_LIBRARY_PATH NAMES ShLwApi HINTS ${WINLIBDIR})
-    
-    set(ws2_32_LIBRARY_PATH "${WINLIBDIR}/WS2_32.Lib")
-    set(shlwapi_LIBRARY_PATH "${WINLIBDIR}/ShLwApi.Lib")
-    set(iphlpapi_LIBRARY_PATH "${WINLIBDIR}/iphlpapi.Lib")
-    message(STATUS ${WINLIBDIR})
+    set(ws2_32_LIBRARY_PATH "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64/WS2_32.Lib")
+    set(shlwapi_LIBRARY_PATH "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64/ShLwApi.Lib")
+    set(iphlpapi_LIBRARY_PATH "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64/iphlpapi.Lib")
+    message(STATUS C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64)
     message(STATUS "WS2_32=${ws2_32_LIBRARY_PATH}")
     message(STATUS "ShLwApi=${shlwapi_LIBRARY_PATH}")
     message(STATUS "liphlpapi=${iphlpapi_LIBRARY_PATH}")
