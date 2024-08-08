@@ -419,21 +419,19 @@ endif()
 
 # WINDOWS-specific MSVC flags and libraries
 if(BUILD_WIN)
-    # 32-bit
-    if(NOT BUILD_WIN64)
-        set(WINLIBDIR,
-                "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x86")
+    find_package(WindowsSDK REQUIRED)
+    if (WIN32)
+	    if (WINDOWSSDK_LATEST_DIR AND CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
+		    set(ws2_32_LIBRARY_PATH "${WINDOWSSDK_LATEST_DIR}/Lib/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/um/x64/WS2_32.lib")
+            set(shlwapi_LIBRARY_PATH "${WINDOWSSDK_LATEST_DIR}/Lib/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/um/x64/ShLwApi.Lib")
+            set(iphlpapi_LIBRARY_PATH "${WINDOWSSDK_LATEST_DIR}/Lib/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/um/x64/iphlpapi.Lib")
+	    else()
+		    find_library(ws2_32_LIBRARY_PATH WS2_32)
+            find_library(shlwapi_LIBRARY_PATH ShLwApi)
+            find_library(iphlpapi_LIBRARY_PATH iphlpapi)
+	    endif()
     endif()
-    # 64-bit
-    if(BUILD_WIN64)
-        set(WINLIBDIR,
-                "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64")
-    endif()
-    # find_library (ws2_32_LIBRARY_PATH NAMES WS2_32 HINTS ${WINLIBDIR})
-    # find_library (shlwapi_LIBRARY_PATH NAMES ShLwApi HINTS ${WINLIBDIR})
-    set(ws2_32_LIBRARY_PATH "${WINLIBDIR}/WS2_32.Lib")
-    set(shlwapi_LIBRARY_PATH "${WINLIBDIR}/ShLwApi.Lib")
-    set(iphlpapi_LIBRARY_PATH "${WINLIBDIR}/iphlpapi.Lib")
+    
     message(STATUS ${WINLIBDIR})
     message(STATUS "WS2_32=${ws2_32_LIBRARY_PATH}")
     message(STATUS "ShLwApi=${shlwapi_LIBRARY_PATH}")
