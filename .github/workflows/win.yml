@@ -25,13 +25,8 @@ jobs:
         distribution: 'zulu'
         java-version: '21'
         
-    - shell: msys2 {0}
-      run: | 
-        cmd.exe
-        jar -version
-        exit
+    - run: jar -version
         
-
     - uses: actions/checkout@v2
 
     - name: Checkout submodules
