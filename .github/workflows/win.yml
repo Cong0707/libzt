@@ -23,6 +23,16 @@ jobs:
           mingw-w64-x86_64-ninja
           mingw-w64-x86_64-winpthreads
           mingw-w64-x86_64-openssl
+
+    - name: Set up MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Install Dependencies
+      run: |
+        choco install visualstudio2022buildtools --params "'/InstallAdditionalWorkloads netfx-4.8-devpack,Microsoft.VisualStudio.Workload.VCTools'"
+        choco install visualstudio2022-workload-vctools
     
     - uses: actions/setup-java@v4
       with:
