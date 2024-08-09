@@ -12,8 +12,6 @@ jobs:
     steps:
     - name: Setup MSBuild and Visual Studio 2022
       uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: '[16.4,16.5)'
         
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
       with:
