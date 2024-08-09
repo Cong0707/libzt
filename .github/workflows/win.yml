@@ -16,10 +16,6 @@ jobs:
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
       with:
         sdk-version: 22621
-
-    - name: Get Windows SDK Installation Path
-      run: gci "C:\Program Files (x86)\Windows Kits\" -Filter "WS2_32.Lib" -Recurse
-      shell: powershell
      
     - uses: actions/setup-java@v4
       with:
