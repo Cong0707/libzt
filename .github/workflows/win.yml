@@ -16,6 +16,20 @@ jobs:
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
       with:
         sdk-version: 26100
+
+    - name: Get Windows SDK Installation Path
+      run: |
+        $sdkVersion = "10.0.26100.0"  # 对应于你的SDK版本
+        $registryPath = "HKLM:\Software\Microsoft\Windows Kits\Installed Roots"
+        $sdkInstallRoot = (Get-ItemProperty -Path $registryPath).KitsRoot10
+
+        if ($sdkInstallRoot) {
+          $sdkPath = Join-Path $sdkInstallRoot $sdkVersion
+          Write-Output "Windows SDK is installed at: $sdkPath"
+        } else {
+          Write-Error "Failed to find Windows SDK installation path."
+        }
+      shell: powershell
      
     - uses: actions/setup-java@v4
       with:
