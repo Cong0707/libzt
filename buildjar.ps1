@@ -1,6 +1,3 @@
-$CLANG_FORMAT = "clang-format-11"
-$libzt = Get-Location
-
 $CMAKE = "cmake3"
 if (-not (Get-Command $CMAKE -ErrorAction SilentlyContinue)) {
     $CMAKE = "cmake"
@@ -27,7 +24,11 @@ elseif ($OSNAME -eq [System.PlatformID]::Unix) {
     $HOST_PLATFORM = "linux"
 }
 
-$HOST_MACHINE_TYPE = [System.Environment]::Is64BitOperatingSystem ? "x64" : "x86"
+if ([System.Environment]::Is64BitOperatingSystem) {
+    $HOST_MACHINE_TYPE = "x64"
+} else {
+    $HOST_MACHINE_TYPE = "x86"
+}
 
 if ($OSNAME -eq [System.PlatformID]::MacOSX) {
     $N_PROCESSORS = (sysctl -n hw.ncpu)
@@ -50,25 +51,18 @@ if (Ver $CMAKE_VERSION -gt Ver "3.12") {
 }
 
 $BUILD_OUTPUT_DIR = (Get-Location).Path + "\dist"
-$BUILD_CACHE_DIR = (Get-Location).Path + "\cache"
-$PKG_DIR = (Get-Location).Path + "\pkg"
 $DEFAULT_HOST_LIB_OUTPUT_DIR = "$BUILD_OUTPUT_DIR\$HOST_PLATFORM-$HOST_MACHINE_TYPE"
 $DEFAULT_HOST_BIN_OUTPUT_DIR = "$BUILD_OUTPUT_DIR\$HOST_PLATFORM-$HOST_MACHINE_TYPE"
 $DEFAULT_HOST_PKG_OUTPUT_DIR = "$BUILD_OUTPUT_DIR\$HOST_PLATFORM-$HOST_MACHINE_TYPE"
-$DEFAULT_HOST_BUILD_CACHE_DIR = "$BUILD_CACHE_DIR\$HOST_PLATFORM-$HOST_MACHINE_TYPE"
+$DEFAULT_HOST_BUILD_CACHE_DIR = (Get-Location).Path + "\cache" + "\$HOST_PLATFORM-$HOST_MACHINE_TYPE"
 
-function Host-Jar {
-    param (
-        [string]$BuildType = "release",
-        [string]$Test = ""
-    )
+$CMAKE_OPTIONS = "-DCMAKE_CXX_COMPILER=G:/CLion_2024.1.4/bin/mingw/bin/g++.exe"
+
+$BuildType = "release"
+$Test = ""
 
     $ARTIFACT = "jar"
-    $PKG_VERSION = (& git describe --tags --abbrev=0)
-    if (-not $PKG_VERSION) {
-        Write-Output "No Git tags found. Ensure you have tags in your Git repository."
-        exit 1
-    }
+    $PKG_VERSION = $PKG_VERSION = (& git describe --tags --abbrev=0) -or "v1.8.10"
     if ($BuildType -like "*docs*") {
         & "$env:JAVA_HOME/bin/javadoc" src/bindings/java/com/zerotier/sockets/*.java -d docs/java
         exit 0
@@ -87,14 +81,19 @@ function Host-Jar {
     $JAVA_JAR_SOURCE_TREE_DIR = "$JAVA_JAR_DIR/com/zerotier/sockets/"
     New-Item -ItemType Directory -Path $JAVA_JAR_SOURCE_TREE_DIR -Force
     Copy-Item -Force src/bindings/java/com/zerotier/sockets/*.java $JAVA_JAR_SOURCE_TREE_DIR
-    & $CMAKE $VARIANT -H. -B$CACHE_DIR -DCMAKE_BUILD_TYPE=$BuildType
-    & $CMAKE --build $CACHE_DIR $BUILD_CONCURRENCY
+    & $CMAKE $VARIANT $CMAKE_OPTIONS . -B"$CACHE_DIR" -DCMAKE_BUILD_TYPE=$BuildType
+    & $CMAKE --build "$CACHE_DIR" $BUILD_CONCURRENCY
     Copy-Item -Force "$CACHE_DIR/lib/libzt.*" $JAVA_JAR_DIR
     Push-Location $JAVA_JAR_DIR
     $env:JAVA_TOOL_OPTIONS = "-Dfile.encoding=UTF8"
     & "$env:JAVA_HOME/bin/javac" -Xlint:all com/zerotier/sockets/*.java
     & "$env:JAVA_HOME/bin/jar" cf "libzt-$PKG_VERSION.jar" $SHARED_LIB_NAME com/zerotier/sockets/*.class
-    Remove-Item -Recurse -Force com $SHARED_LIB_NAME
+    if ($null -ne $SHARED_LIB_NAME) {
+        Remove-Item -Recurse -Force com $SHARED_LIB_NAME
+    } else {
+        Write-Output "Warning: SHARED_LIB_NAME is null or not set, skipping removal."
+    }
+
     Pop-Location
     Write-Output "`nContents of JAR:`n"
     & "$env:JAVA_HOME/bin/jar" tf "$JAVA_JAR_DIR/*.jar"
@@ -119,4 +118,3 @@ function Host-Jar {
         Start-Process -FilePath "$env:JAVA_HOME/bin/java" -ArgumentList "-cp .:libzt-$PKG_VERSION.jar selftest client $env:bob_path $env:testnet $env:alice_ip4 $env:port4" -PassThru
         Pop-Location
     }
-} 
