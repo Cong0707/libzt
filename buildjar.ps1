@@ -62,7 +62,10 @@ $BuildType = "release"
 $Test = ""
 
     $ARTIFACT = "jar"
-    $PKG_VERSION = $PKG_VERSION = (& git describe --tags --abbrev=0) -or "v1.8.10"
+    $PKG_VERSION = (& git describe --tags --abbrev=0 2>$null)
+    if (-not $PKG_VERSION) {
+        $PKG_VERSION = "v1.8.10"
+    }
     if ($BuildType -like "*docs*") {
         & "$env:JAVA_HOME/bin/javadoc" src/bindings/java/com/zerotier/sockets/*.java -d docs/java
         exit 0
@@ -84,15 +87,18 @@ $Test = ""
     & $CMAKE $VARIANT $CMAKE_OPTIONS . -B"$CACHE_DIR" -DCMAKE_BUILD_TYPE=$BuildType
     & $CMAKE --build "$CACHE_DIR" $BUILD_CONCURRENCY
     Copy-Item -Force "$CACHE_DIR/lib/libzt.*" $JAVA_JAR_DIR
+    Copy-Item -Force "$CACHE_DIR/lib/zt-shared.*" $JAVA_JAR_DIR
+
+    # 重命名文件，将 zt-shared.* 改为 zt.*
+    Get-ChildItem "$JAVA_JAR_DIR/zt-shared.*" | ForEach-Object {
+        $newName = $_.Name -replace 'zt-shared', 'zt'
+        Rename-Item -Path $_.FullName -NewName $newName
+    }
+    
     Push-Location $JAVA_JAR_DIR
     $env:JAVA_TOOL_OPTIONS = "-Dfile.encoding=UTF8"
     & "$env:JAVA_HOME/bin/javac" -Xlint:all com/zerotier/sockets/*.java
-    & "$env:JAVA_HOME/bin/jar" cf "libzt-$PKG_VERSION.jar" $SHARED_LIB_NAME com/zerotier/sockets/*.class
-    if ($null -ne $SHARED_LIB_NAME) {
-        Remove-Item -Recurse -Force com $SHARED_LIB_NAME
-    } else {
-        Write-Output "Warning: SHARED_LIB_NAME is null or not set, skipping removal."
-    }
+    & "$env:JAVA_HOME/bin/jar" cf "libzt-$PKG_VERSION.jar" com/zerotier/sockets/*.class
 
     Pop-Location
     Write-Output "`nContents of JAR:`n"
