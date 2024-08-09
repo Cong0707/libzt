@@ -15,7 +15,7 @@ jobs:
         
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
       with:
-        sdk-version: 22621
+        sdk-version: 26100
      
     - uses: actions/setup-java@v4
       with:
