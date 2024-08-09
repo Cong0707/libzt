@@ -15,7 +15,7 @@ jobs:
         
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
       with:
-        sdk-version: 26100
+        sdk-version: 22621
 
     - name: Get Windows SDK Installation Path
       run: |
