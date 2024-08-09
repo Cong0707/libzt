@@ -19,7 +19,7 @@ jobs:
 
     - name: Get Windows SDK Installation Path
       run: |
-        $sdkVersion = "10.0.26100.0"  # 对应于你的SDK版本
+        $sdkVersion = "10.0.22621.0"  # 对应于你的SDK版本
         $registryPath = "HKLM:\Software\Microsoft\Windows Kits\Installed Roots"
         $sdkInstallRoot = (Get-ItemProperty -Path $registryPath).KitsRoot10
 
